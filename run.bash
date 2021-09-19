@@ -1,2 +1,2 @@
-gcc -o main main.c
-./main
+g++ -o main.exe main.cpp
+./main.exe

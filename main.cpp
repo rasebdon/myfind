@@ -1,7 +1,10 @@
 #include <stdio.h>
-#include <sys/types.h>
+#include <iostream>
+#include <sys/wait.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
+//test
 int main(void)
 {
     const int childAmount = 5;
