@@ -1,4 +1,4 @@
-#include "msgQueue.h"
+#include "messageQueue/msgQueue.h"
 #include "findBehaviour/findAttributes.h"
 #include <signal.h>
 
