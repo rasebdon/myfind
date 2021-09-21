@@ -6,6 +6,10 @@
 
 namespace myFind {
 
+    findAttributes::findAttributes() {
+        
+    }
+
     findAttributes::findAttributes(int argc, char* argv[])
     {
         this->programName = argv[0];

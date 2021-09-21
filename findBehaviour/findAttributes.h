@@ -14,6 +14,7 @@ namespace myFind {
         void printUsage();
     public:
         findAttributes(int argc, char* argv[]);
+        findAttributes();
         ~findAttributes();
         
         void printAttributes();
