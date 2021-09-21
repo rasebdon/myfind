@@ -8,7 +8,11 @@ namespace myFind {
 
     findAttributes::findAttributes(int argc, char* argv[])
     {
-        programName = argv[0];
+        this->programName = argv[0];
+
+        // Set default values of optional parameters
+        this->recursive = false;
+        this->caseInsensitive = false;
 
         // Get optional parameters
         int option;
@@ -17,13 +21,13 @@ namespace myFind {
             switch (option)
             {
                 case 'i':
-                    caseInsensitive = true;
+                    this->caseInsensitive = true;
                     break;
                 case 'R':
-                    recursive = true;
+                    this->recursive = true;
                     break;
                 case '?':
-                    std::cerr << programName << " error: Unknown option.\n";
+                    std::cerr << this->programName << " error: Unknown option.\n";
                     printUsage();
                     exit(1);
                 default:
@@ -31,20 +35,18 @@ namespace myFind {
                     break;
             }
         }
-        // Get files (required)
-        std::vector<std::string> files;
         // Print files to find
         if (optind < argc)
         {
             while (optind < argc)
             {
                 std::string file = argv[optind++];
-                files.push_back(file);
+                this->files.push_back(file);
             }
         }
         else
         {
-            std::cerr << programName << " error: No files given for searching.\n";
+            std::cerr << this->programName << " error: No files given for searching.\n";
             printUsage();
             exit(1);
         }
@@ -55,18 +57,18 @@ namespace myFind {
     }
 
     void findAttributes::printUsage() {
-        std::cout << "Usage:\n\n " << programName << " [-R] [-i] filename [filename2] ... [filenameN]\n\n";
+        std::cout << "Usage:\n\n " << this->programName << " [-R] [-i] filename [filename2] ... [filenameN]\n\n";
     }
 
     void findAttributes::printAttributes() {
         // Print options
-        std::cout << "Case-Insensitive: " << format::boolToString(caseInsensitive) << std::endl;
-        std::cout << "Recursive: " << format::boolToString(recursive) << std::endl;
+        std::cout << "Case-Insensitive: " << format::boolToString(this->caseInsensitive) << std::endl;
+        std::cout << "Recursive: " << format::boolToString(this->recursive) << std::endl;
         std::cout << "Files to find: " << std::endl;
 
-        for (size_t i = 0; i < files.size(); i++)
+        for (size_t i = 0; i < this->files.size(); i++)
         {
-            std::cout << files.at(i) << std::endl;
+            std::cout << this->files.at(i) << std::endl;
         }
     }
 }
