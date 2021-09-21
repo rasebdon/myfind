@@ -1,6 +1,8 @@
 #include "findClient.h"
 #include "findBehaviour/findAttributes.h"
+#include "messageQueue/msgQueue.h"
 #include <unistd.h>
+#include <sys/wait.h>
 #include <iostream>
 #include <vector>
 #include <dirent.h>
@@ -22,7 +24,9 @@ namespace myFind {
         {
             while ((diread = readdir(dir)) != nullptr)
             {
-                files.push_back(diread->d_name);
+                if((std::string)diread->d_name != ".." && (std::string)diread->d_name != ".") {
+                    files.push_back(diread->d_name);
+                }
             }
             closedir(dir);
         }
@@ -38,7 +42,6 @@ namespace myFind {
         struct stat s;
         // Search file and fork if dir is found and -R
         for (auto file : files) {
-
             if( stat((dirToSerach + "/" + file).c_str(), &s) == 0 )
             {
                 if( s.st_mode & S_IFDIR )
@@ -52,6 +55,14 @@ namespace myFind {
                         if (pid == 0)
                         {
                             brokenOutFolder = file;
+                                msgQueue::sendMessage(
+                                    {
+                                        .mType = 2,
+                                        .childPId = (long)getpid(),
+                                        .quitting = false,
+                                        .starting = true
+                                    }
+                                );
                             break;
                         }
                         else if (pid == -1)
@@ -66,18 +77,29 @@ namespace myFind {
                     //it's a file
                     for (auto fileToSearch : attributes.getFilesToSearch())
                     {
+                        message_t msg = {
+                            .mType = (long)1,
+                            .childPId = (long)getpid(),
+                            .quitting = false,
+                            .starting = false
+                        };
+
+                        strncpy(msg.absolutePath, fileToSearch.c_str(), MAX_DATA);
+                        strncpy(msg.absolutePath, (dirToSerach + "/" + fileToSearch).c_str(), MAX_DATA);
+
                         if (attributes.isCaseInsensitive())
                         {
                             std::transform(file.begin(), file.end(), file.begin(), ::tolower);
                             if(file == fileToSearch) {
                                 // Write to msg queue
-                                std::cout << "FOUND!";
+                                msgQueue::sendMessage(msg);
                             }
                         }
                         else
                         {
                             if(file == fileToSearch) {
                                 // Write to msg queue
+                                msgQueue::sendMessage(msg);
                             }
                         }
                     }
@@ -96,9 +118,24 @@ namespace myFind {
             }
         }
 
-        if(oldPid != getpid()) {
-            //myFind::findClient client = myFind::findClient(dirToSerach + "/" + brokenOutFolder, attributes);
+        if(oldPid != (long)getpid()) {
+            // std::cout << "Searching " << brokenOutFolder << " oldPid: " << oldPid << " newPid: " << (long)getpid() << std::endl;
+            myFind::findClient client = myFind::findClient(dirToSerach + "/" + brokenOutFolder, attributes);
         }
+        
+        // Wait for child processes
+        wait(NULL);
+
+        msgQueue::sendMessage(
+            {
+                .mType = 1,
+                .childPId = oldPid,
+                .quitting = true,
+                .starting = false
+            }
+        );
+
+        exit(0);
     }
 
     findClient::~findClient()

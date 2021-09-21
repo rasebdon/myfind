@@ -1,5 +1,6 @@
-all: findClient findServer format finder findAttributes
-	g++ -o main main.cpp findClient.o findServer.o format.o finder.o findAttributes.o
+all: findClient findServer format finder findAttributes msgQueue
+	g++ -o main main.cpp findClient.o findServer.o format.o finder.o findAttributes.o msgQueue.o
+	cp main ../testing
 findClient:
 	g++ -c -Wall findClient.h findClient.cpp
 findServer:
@@ -10,7 +11,8 @@ finder:
 	g++ -c -Wall findBehaviour/finder.h findBehaviour/finder.cpp
 findAttributes:
 	g++ -c -Wall findBehaviour/findAttributes.h findBehaviour/findAttributes.cpp
-
+msgQueue:
+	g++ -c -Wall messageQueue/msgQueue.h messageQueue/msgQueue.cpp
 clean:
 	find . -type f -name '*.h.gch' -delete -o -name '*.o' -delete
 
