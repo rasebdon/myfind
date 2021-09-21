@@ -3,11 +3,22 @@
 #include <assert.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <algorithm>
 
 namespace myFind {
 
     findAttributes::findAttributes() {
         
+    }
+
+    bool findAttributes::isRecursive() {
+        return this->recursive;
+    }
+    bool findAttributes::isCaseInsensitive() {
+        return this->caseInsensitive;
+    }
+    std::vector<std::string> findAttributes::getFilesToSearch() {
+        return this->files;
     }
 
     findAttributes::findAttributes(int argc, char* argv[])
@@ -45,6 +56,10 @@ namespace myFind {
             while (optind < argc)
             {
                 std::string file = argv[optind++];
+                if (this->caseInsensitive)
+                {
+                    std::transform(file.begin(), file.end(), file.begin(), ::tolower);
+                }
                 this->files.push_back(file);
             }
         }

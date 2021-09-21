@@ -1,8 +1,14 @@
-class findClient
+#include "findBehaviour/findAttributes.h"
+#include <string>
+
+namespace myFind
 {
-private:
-    /* data */
-public:
-    findClient(/* args */);
-    ~findClient();
-};
+    class findClient
+    {
+    private:
+        std::string myDir;
+    public:
+        findClient(std::string dirToSerach, myFind::findAttributes attributes);
+        ~findClient();
+    };
+}

@@ -1,3 +1,6 @@
+#ifndef HEADER_H_
+#define HEADER_H_
+
 #include <iostream>
 #include <vector>
 
@@ -18,5 +21,10 @@ namespace myFind {
         ~findAttributes();
         
         void printAttributes();
+        bool isRecursive();
+        bool isCaseInsensitive();
+        std::vector<std::string> getFilesToSearch();
     };
 }
+
+#endif // HEADER_H_

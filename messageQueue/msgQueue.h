@@ -1,10 +1,11 @@
-#define KEY 420257999		/* eindeutiger Key z.B. Matrikelnummer */
+#define KEY 13377331
 #define PERM 0660
 
-#define MAX_DATA 255
+#define MAX_DATA 512
 
 typedef struct
 {
 	long mType;
-	char mText[MAX_DATA];
+	char relativePath[MAX_DATA];
+    int childPId;
 } message_t;

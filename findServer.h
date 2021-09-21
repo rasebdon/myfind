@@ -7,8 +7,10 @@ namespace myFind {
     private:
         findAttributes _attributes;
     public:
+        int activeClients;
+        
         findServer();
-        findServer(findAttributes attributes);
+        findServer(myFind::findAttributes attributes);
         ~findServer();
     };
 }
