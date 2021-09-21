@@ -13,6 +13,5 @@ findAttributes:
 	g++ -c -Wall findBehaviour/findAttributes.h findBehaviour/findAttributes.cpp
 
 clean:
-	rm -r *.o
-	rm -r *.h.gch
+	find . -type f -name '*.h.gch' -delete -o -name '*.o' -delete
 
