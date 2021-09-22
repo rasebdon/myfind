@@ -2,6 +2,8 @@
 #include "findClient.h"
 #include "messageQueue/msgQueue.h"
 #include <unistd.h>
+#include <sys/wait.h>
+#include <iomanip>
 
 namespace myFind {
 
@@ -23,6 +25,31 @@ namespace myFind {
             exit(1);
         }
 
+        // Message queue printing
+        message_t msg;	/* Buffer fuer Message */
+        int msgid = -1;	/* Message Queue ID */
+
+    tryCreateQueue:
+        /* Message Queue neu anlegen */
+        if ((msgid = msgget(KEY, PERM | IPC_CREAT | IPC_EXCL)) == -1)
+        {
+            pid_t queueCleanPid = fork();
+            if(queueCleanPid == 0)
+            {
+                std::stringstream stream;
+                stream << "0x" << std::hex << (int)KEY;
+                std::cout << stream.str(); 
+                execl("/bin/ipcrm", "ipcrm", "-Q", stream.str().c_str(), (char *)0);
+            }
+
+            /* error handling */
+            std::cerr << "Error creating message queue\n";
+            std::cerr << "Cleaning up message queue\n";
+            wait(NULL);
+            goto tryCreateQueue;
+        }
+
+
         pid_t pid = fork();
 
         // First client process starts
@@ -34,18 +61,7 @@ namespace myFind {
             exit(1);
         }
 
-        // Message queue printing
-        message_t msg;	/* Buffer fuer Message */
-        int msgid = -1;	/* Message Queue ID */
-
-        /* Message Queue neu anlegen */
-        if ((msgid = msgget(KEY, PERM | IPC_CREAT | IPC_EXCL)) == -1)
-        {
-            /* error handling */
-            std::cerr << "Error creating message queue\n";
-            return;
-        }
-
+        
         this->activeClients = 1;
 
         while (this->activeClients > 0)
