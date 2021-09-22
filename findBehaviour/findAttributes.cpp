@@ -42,7 +42,7 @@ namespace myFind {
                     this->recursive = true;
                     break;
                 case '?':
-                    std::cerr << this->programName << " error: Unknown option.\n";
+                    std::cout << this->programName << " error: Unknown option." << std::endl;
                     printUsage();
                     exit(1);
                 default:
@@ -65,7 +65,7 @@ namespace myFind {
         }
         else
         {
-            std::cerr << this->programName << " error: No files given for searching.\n";
+            std::cout << this->programName << " error: No files given for searching." << std::endl;
             printUsage();
             exit(1);
         }
@@ -76,7 +76,7 @@ namespace myFind {
     }
 
     void findAttributes::printUsage() {
-        std::cout << "Usage:\n\n " << this->programName << " [-R] [-i] filename [filename2] ... [filenameN]\n\n";
+        std::cout << "Usage:\n\n " << this->programName << " [-R] [-i] filename [filename2] ... [filenameN]\n" << std::endl;
     }
 
     void findAttributes::printAttributes() {

@@ -7,7 +7,7 @@ int msgQueue::sendMessage(message_t msg) {
     if ((msgid = msgget(KEY, PERM)) == -1)
     {
         /* error handling */
-        std::cerr << "Can't access message queue\n";
+        std::cout << "Can't access message queue" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -15,7 +15,7 @@ int msgQueue::sendMessage(message_t msg) {
     if (msgsnd(msgid, &msg, sizeof(msg) - sizeof(long), 0) == -1)
     {
         /* error handling */
-        std::cerr << "Can't send message\n";
+        std::cout << "Can't send message" << std::endl;
         return EXIT_FAILURE;
     }
     //std::cout << "\nMsg Sent: pid=" << msg.childPId << " absolutePath=" << msg.absolutePath << std::endl;

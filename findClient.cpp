@@ -32,7 +32,7 @@ namespace myFind {
         }
         else
         {
-            std::cerr << "opendir";
+            std::cout << "opendir" << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -67,7 +67,7 @@ namespace myFind {
                         }
                         else if (pid == -1)
                         {
-                            std::cerr << "Fatal error, stopping program";
+                            std::cout << "Fatal error, stopping program" << std::endl;
                             exit(1);
                         }
                     }
@@ -107,7 +107,7 @@ namespace myFind {
                 else
                 {
                     //something else
-                    std::cout << "What did you bring upon this cursed land???";
+                    std::cout << "What did you bring upon this cursed land???" << std::endl;
                     exit(1);
                 }
             }

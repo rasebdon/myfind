@@ -8,6 +8,7 @@ namespace myFind {
         findAttributes _attributes;
     public:
         int activeClients;
+        void removeQueue();
         
         findServer();
         findServer(myFind::findAttributes attributes);
