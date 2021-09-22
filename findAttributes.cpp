@@ -1,5 +1,5 @@
 #include "findAttributes.h"
-#include "format.h"
+#include "helper/formatHelper.h"
 #include <assert.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -17,7 +17,11 @@ namespace myFind {
     bool findAttributes::isCaseInsensitive() {
         return this->caseInsensitive;
     }
-    std::vector<std::string> findAttributes::getFilesToSearch() {
+    std::string findAttributes::getFileToSearch() {
+        return this->files.at(fileToSearchIndex);
+    }
+
+    std::vector<std::string> findAttributes::getFilesToFind() {
         return this->files;
     }
 
@@ -81,8 +85,8 @@ namespace myFind {
 
     void findAttributes::printAttributes() {
         // Print options
-        std::cout << "Case-Insensitive: " << format::boolToString(this->caseInsensitive) << std::endl;
-        std::cout << "Recursive: " << format::boolToString(this->recursive) << std::endl;
+        std::cout << "Case-Insensitive: " << formatHelper::boolToString(this->caseInsensitive) << std::endl;
+        std::cout << "Recursive: " << formatHelper::boolToString(this->recursive) << std::endl;
         std::cout << "Files to find: " << std::endl;
 
         for (size_t i = 0; i < this->files.size(); i++)

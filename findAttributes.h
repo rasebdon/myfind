@@ -16,6 +16,7 @@ namespace myFind {
 
         void printUsage();
     public:
+        int fileToSearchIndex = 0;
         findAttributes(int argc, char* argv[]);
         findAttributes();
         ~findAttributes();
@@ -23,7 +24,8 @@ namespace myFind {
         void printAttributes();
         bool isRecursive();
         bool isCaseInsensitive();
-        std::vector<std::string> getFilesToSearch();
+        std::string getFileToSearch();
+        std::vector<std::string> getFilesToFind();
     };
 }
 

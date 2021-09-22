@@ -1,6 +1,6 @@
 #include "messageQueue/msgQueue.h"
-#include "findBehaviour/findAttributes.h"
-#include "findServer.h"
+#include "findAttributes.h"
+#include "findRootProcess.h"
 #include <signal.h>
 #include <sys/wait.h>
 // Plan:
@@ -20,8 +20,10 @@ int main(int argc, char* argv[]) {
     attributes.printAttributes();
 
     // Start server with attributes
-    myFind::findServer server = myFind::findServer(attributes);
+    myFind::findRootProcess rootProcess = myFind::findRootProcess(attributes);
+    rootProcess.startChildrenProcesses();
+    rootProcess.receiveMessages();
     wait(nullptr);
-    server.removeQueue();
+    msgQueue::removeQueue();
     return 0;
 }
