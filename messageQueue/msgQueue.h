@@ -1,29 +1,45 @@
+#ifndef _MSGQUEUE_H_
+#define _MSGQUEUE_H_
+
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <sys/types.h>
+#include <iomanip>
+#include <unistd.h>
+#include <sys/wait.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include "../helper/forkHelper.h"
 
 #define KEY 13377331
 #define PERM 0660
 
 #define MAX_DATA 512
 
-typedef struct
+enum queueMessageType { LiveStatus, FoundFileData };
+
+struct queueMessage
 {
-	long mType;
-	char absolutePath[MAX_DATA];
-	char filename[MAX_DATA];
+    long mType;
+    queueMessageType messageType;
     long childPId;
-    bool quitting;
     bool starting;
-} message_t;
+    bool quitting;
+    char absolutePath[MAX_DATA];
+    char filename[MAX_DATA];
+};
 
 class msgQueue
 {
+private:
+    int _key;
+    int _premissions;
+    int _queueId;
 public:
-    static int sendMessage(message_t msg);
+    msgQueue(int key, int permissions); 
+    int sendMessage(queueMessage &msg);
+    void removeQueue();
+    int createQueue();
+    void receiveMessage(queueMessage &msg);
+    ~msgQueue();
 };
+// TODO: FIX STATIC USAGE
+#endif

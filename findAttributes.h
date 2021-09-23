@@ -1,6 +1,9 @@
-#ifndef HEADER_H_
-#define HEADER_H_
-
+#ifndef _FINDATTRIBUTES_H_
+#define _FINDATTRIBUTES_H_
+#include <assert.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -16,6 +19,7 @@ namespace myFind {
 
         void printUsage();
     public:
+        int fileToSearchIndex = 0;
         findAttributes(int argc, char* argv[]);
         findAttributes();
         ~findAttributes();
@@ -23,7 +27,8 @@ namespace myFind {
         void printAttributes();
         bool isRecursive();
         bool isCaseInsensitive();
-        std::vector<std::string> getFilesToSearch();
+        std::string getFileToSearch();
+        std::vector<std::string> getFilesToFind();
     };
 }
 
