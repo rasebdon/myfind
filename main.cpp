@@ -14,15 +14,13 @@
 // Stop server when all processes (count == 0) have been stopped 
 
 int main(int argc, char* argv[]) {
-    // Get attributes
     myFind::findAttributes attributes = myFind::findAttributes(argc, argv);
-
     attributes.printAttributes();
 
-    // Start server with attributes
     myFind::findRootProcess rootProcess = myFind::findRootProcess(attributes);
     rootProcess.startChildrenProcesses();
     rootProcess.receiveMessages();
+
     wait(nullptr);
     return 0;
 }

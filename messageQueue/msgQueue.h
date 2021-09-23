@@ -14,17 +14,18 @@
 
 #define MAX_DATA 512
 
-struct message_t
+enum queueMessageType { LiveStatus, FoundFileData };
+
+struct queueMessage
 {
     long mType;
+    queueMessageType messageType;
+    long childPId;
+    bool starting;
+    bool quitting;
     char absolutePath[MAX_DATA];
     char filename[MAX_DATA];
-    long childPId;
-    bool quitting;
-    bool starting;
 };
-
-enum message_type {  };
 
 class msgQueue
 {
@@ -34,10 +35,10 @@ private:
     int _queueId;
 public:
     msgQueue(int key, int permissions); 
-    int sendMessage(message_t msg);
+    int sendMessage(queueMessage &msg);
     void removeQueue();
     int createQueue();
-    void receiveMessage(message_t &msg);
+    void receiveMessage(queueMessage &msg);
     ~msgQueue();
 };
 // TODO: FIX STATIC USAGE

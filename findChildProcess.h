@@ -24,6 +24,8 @@ namespace myFind
     public:
         findChildProcess(std::string directoryToSerach, myFind::findAttributes attributes, msgQueue &msgQueue);
         void findFile();
+        void tryHandleFoundEntry(std::string directoryEntry, std::string directoryOfEntry);
+        void sendFoundFileData(std::string &foundFile, std::string &directoryOfFile);
         ~findChildProcess();
     };
 }

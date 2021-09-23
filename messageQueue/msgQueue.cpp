@@ -38,7 +38,7 @@ int msgQueue::createQueue() {
     return _queueId;
 }
 
-int msgQueue::sendMessage(message_t msg) {
+int msgQueue::sendMessage(queueMessage &msg) {
     if (msgsnd(_queueId, &msg, sizeof(msg) - sizeof(long), 0) == -1)
     {
         /* error handling */
@@ -61,7 +61,7 @@ void msgQueue::removeQueue() {
     wait(NULL);
 }
 
-void msgQueue::receiveMessage(message_t &msg) {
+void msgQueue::receiveMessage(queueMessage &msg) {
     if (msgrcv(_queueId, &msg, sizeof(msg) - sizeof(long), 0, 0) == -1)
     {
         std::cout << "Can't receive from message queue" << std::endl;

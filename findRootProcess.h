@@ -17,7 +17,7 @@ namespace myFind {
     private:
         bool hasChildProcesses = false;
         findAttributes _attributes;
-        message_t msgBuffer;
+        queueMessage msgBuffer;
         msgQueue _msgQueue;
         int msgQueueId;
         std::string currentDirectory;
@@ -28,6 +28,8 @@ namespace myFind {
         findRootProcess(myFind::findAttributes attributes);
         ~findRootProcess();
 
+        void processLiveStatusMessage(queueMessage &liveStatusMessage);
+        void processFoundFileDataMessage(queueMessage &foundFileDataMessage);
         void receiveMessages();
         void startChildrenProcesses();
     };

@@ -30,24 +30,38 @@ namespace myFind {
         {
             _msgQueue.receiveMessage(msgBuffer);
             
-            // Child process started
-            if(msgBuffer.quitting) {
-                this->activeClients--;
-                if(this->activeClients == 0)
-                    hasChildProcesses = false;
-                // std::cout << "Child killed, processes left: " << this->activeClients << std::endl;
-            }
-            // Child process stopped
-            else if(msgBuffer.starting) {
-                this->activeClients++;
-                // std::cout << "Child added, processes left: " << this->activeClients << std::endl;
-            }
-            // A file has been found!
-            else if(((std::string)(msgBuffer.absolutePath)).size() > 0 || ((std::string)(msgBuffer.filename)).size() > 0) {
-                // <pid>: <filename>: <complete-path-to-found-file>\n
-                std::cout << msgBuffer.childPId << ": " << msgBuffer.filename << ": " << msgBuffer.absolutePath << std::endl;
+            switch (msgBuffer.messageType)
+            {
+            case queueMessageType::LiveStatus:
+                processLiveStatusMessage(msgBuffer);
+                break;
+            case queueMessageType::FoundFileData:
+                processFoundFileDataMessage(msgBuffer);
+                break;
+            default:
+                break;
             }
         }
+    }
+
+    void findRootProcess::processLiveStatusMessage(queueMessage &liveStatusMessage) {
+        if(liveStatusMessage.quitting) {
+            this->activeClients--;
+            if(this->activeClients == 0)
+                hasChildProcesses = false;
+            // std::cout << "Child killed, processes left: " << this->activeClients << std::endl;
+        }
+        else if(liveStatusMessage.starting) {
+            this->activeClients++;
+            // std::cout << "Child added, processes left: " << this->activeClients << std::endl;
+        }
+    }
+
+    void findRootProcess::processFoundFileDataMessage(queueMessage &foundFileDataMessage) {
+        // <pid>: <filename>: <complete-path-to-found-file>\n
+        std::cout << foundFileDataMessage.childPId << ": " 
+            << foundFileDataMessage.filename << ": " 
+            << foundFileDataMessage.absolutePath << std::endl;
     }
 
     findRootProcess::~findRootProcess()

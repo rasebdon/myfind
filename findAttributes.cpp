@@ -55,10 +55,9 @@ namespace myFind {
             while (optind < argc)
             {
                 std::string file = argv[optind++];
-                if (this->caseInsensitive)
-                {
+                if(this->caseInsensitive)
                     std::transform(file.begin(), file.end(), file.begin(), ::tolower);
-                }
+
                 this->files.push_back(file);
             }
         }
