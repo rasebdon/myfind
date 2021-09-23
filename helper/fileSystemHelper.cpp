@@ -4,7 +4,7 @@ std::string fileSystemHelper::getWorkingDirectory() {
     char buffer[512];
     if (getcwd(buffer, sizeof(buffer)) != NULL)
     {
-        std::cout << "Current working directory : " << buffer << std::endl;
+        //std::cout << "Current working directory : " << buffer << std::endl;
         return buffer;
     }
     else

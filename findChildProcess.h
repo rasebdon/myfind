@@ -17,9 +17,13 @@ namespace myFind
     class findChildProcess
     {
     private:
-        std::string myDir;
+        myFind::findAttributes _attributes;
+        std::string _rootDirectoryToSearch;
+        void findFile(std::string directoryToSearch);
+        msgQueue &_msgQueue;
     public:
-        findChildProcess(std::string dirToSerach, myFind::findAttributes attributes);
+        findChildProcess(std::string directoryToSerach, myFind::findAttributes attributes, msgQueue &msgQueue);
+        void findFile();
         ~findChildProcess();
     };
 }

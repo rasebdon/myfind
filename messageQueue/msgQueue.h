@@ -14,22 +14,31 @@
 
 #define MAX_DATA 512
 
-typedef struct
+struct message_t
 {
-	long mType;
-	char absolutePath[MAX_DATA];
-	char filename[MAX_DATA];
+    long mType;
+    char absolutePath[MAX_DATA];
+    char filename[MAX_DATA];
     long childPId;
     bool quitting;
     bool starting;
-} message_t;
+};
+
+enum message_type {  };
 
 class msgQueue
 {
+private:
+    int _key;
+    int _premissions;
+    int _queueId;
 public:
-    static int sendMessage(message_t msg);
-    static void removeQueue();
-    static int createQueue();
+    msgQueue(int key, int permissions); 
+    int sendMessage(message_t msg);
+    void removeQueue();
+    int createQueue();
+    void receiveMessage(message_t &msg);
+    ~msgQueue();
 };
-
+// TODO: FIX STATIC USAGE
 #endif

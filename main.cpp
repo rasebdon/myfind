@@ -24,6 +24,5 @@ int main(int argc, char* argv[]) {
     rootProcess.startChildrenProcesses();
     rootProcess.receiveMessages();
     wait(nullptr);
-    msgQueue::removeQueue();
     return 0;
 }

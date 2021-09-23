@@ -1,14 +1,9 @@
 #include "findAttributes.h"
-#include "helper/formatHelper.h"
-#include <assert.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <algorithm>
 
 namespace myFind {
 
     findAttributes::findAttributes() {
-        
+
     }
 
     bool findAttributes::isRecursive() {
@@ -85,13 +80,14 @@ namespace myFind {
 
     void findAttributes::printAttributes() {
         // Print options
-        std::cout << "Case-Insensitive: " << formatHelper::boolToString(this->caseInsensitive) << std::endl;
-        std::cout << "Recursive: " << formatHelper::boolToString(this->recursive) << std::endl;
-        std::cout << "Files to find: " << std::endl;
+        std::cout << "Case-Insensitive: " << std::boolalpha << this->caseInsensitive << " | ";
+        std::cout << "Recursive: " << std::boolalpha << this->recursive << " | ";
+        std::cout << "Files to find: ";
 
         for (size_t i = 0; i < this->files.size(); i++)
         {
-            std::cout << this->files.at(i) << std::endl;
+            std::cout << this->files.at(i) << " ";
         }
+        std::cout << std::endl;
     }
 }

@@ -1,6 +1,9 @@
-#ifndef HEADER_H_
-#define HEADER_H_
-
+#ifndef _FINDATTRIBUTES_H_
+#define _FINDATTRIBUTES_H_
+#include <assert.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <algorithm>
 #include <iostream>
 #include <vector>
 

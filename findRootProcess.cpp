@@ -2,19 +2,23 @@
 
 namespace myFind {
 
-    findRootProcess::findRootProcess(myFind::findAttributes attributes)
+    findRootProcess::findRootProcess(myFind::findAttributes attributes) : _msgQueue(KEY, PERM)
     {
         this->_attributes = attributes;
         this->currentDirectory = fileSystemHelper::getWorkingDirectory();
-        this->msgQueueId = msgQueue::createQueue();
+        this->msgQueueId = _msgQueue.createQueue();
     }
 
     void findRootProcess::startChildrenProcesses() {
-        for (auto file:_attributes.getFilesToFind())
+        for (auto file : _attributes.getFilesToFind())
         {
-            this->activeClients++;
+            hasChildProcesses = true;
             forkHelper::tryFork(
-                [&](){myFind::findChildProcess(currentDirectory, _attributes);exit(0);},
+                [&](){
+                    findChildProcess _findChildProcess = findChildProcess(currentDirectory, _attributes, _msgQueue);
+                    _findChildProcess.findFile();
+                    exit(0);
+                },
                 nullptr
             );
             _attributes.fileToSearchIndex++;
@@ -22,23 +26,21 @@ namespace myFind {
     }
 
     void findRootProcess::receiveMessages(){
-        while (this->activeClients > 0)
+        while (hasChildProcesses)
         {
-            std::cout << activeClients<<std::endl;
-            if (msgrcv(msgQueueId, &msgBuffer, sizeof(msgBuffer) - sizeof(long), 0, 0) == -1)
-            {
-                std::cout << "Can't receive from message queue" << std::endl;
-                break;
-            }
+            _msgQueue.receiveMessage(msgBuffer);
+            
             // Child process started
             if(msgBuffer.quitting) {
                 this->activeClients--;
-                //std::cout << "Child killed, processes left: " << this->activeClients << std::endl;
+                if(this->activeClients == 0)
+                    hasChildProcesses = false;
+                // std::cout << "Child killed, processes left: " << this->activeClients << std::endl;
             }
             // Child process stopped
             else if(msgBuffer.starting) {
                 this->activeClients++;
-                //std::cout << "Child added, processes left: " << this->activeClients << std::endl;
+                // std::cout << "Child added, processes left: " << this->activeClients << std::endl;
             }
             // A file has been found!
             else if(((std::string)(msgBuffer.absolutePath)).size() > 0 || ((std::string)(msgBuffer.filename)).size() > 0) {

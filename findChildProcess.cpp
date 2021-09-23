@@ -3,39 +3,82 @@
 
 namespace myFind {
 
-    findChildProcess::findChildProcess(std::string dirToSerach, myFind::findAttributes attributes)
+    findChildProcess::findChildProcess(
+        std::string directoryToSerach, 
+        myFind::findAttributes attributes, 
+        msgQueue &msgQueue) : _msgQueue(msgQueue)
     {
-        std::vector<std::string> files = fileSystemHelper::getDirectoryContent(dirToSerach);
-        
-        // Search file and fork if dir is found and -R
-        for (auto file : files) {
-            if (fileSystemHelper::fillStatInfo(dirToSerach + "/" + file) == 0)
+        _attributes = attributes;
+        _rootDirectoryToSearch = directoryToSerach;
+    }
+
+    void findChildProcess::findFile() {
+        _msgQueue.sendMessage(
             {
-                if(fileSystemHelper::isDirectory() )
+                .mType = 1,
+                .childPId = (long)getpid(),
+                .quitting = false,
+                .starting = true
+            }
+        );
+
+        findFile(_rootDirectoryToSearch);
+
+        _msgQueue.sendMessage(
+            {
+                .mType = 1,
+                .childPId = (long)getpid(),
+                .quitting = true,
+                .starting = false
+            }
+        );
+    }
+
+    void findChildProcess::findFile(std::string directoryToSearch) {
+        std::vector<std::string> directoryContent = fileSystemHelper::getDirectoryContent(directoryToSearch);
+        
+        for (auto directoryEntry : directoryContent) {
+            if (fileSystemHelper::fillStatInfo(directoryToSearch + "/" + directoryEntry) == 0)
+            {
+                if (fileSystemHelper::isDirectory())
                 {
-                    if(attributes.isRecursive()) {
-                        findChildProcess findChildProcess(dirToSerach + "/" + file, attributes);
+                    auto fileToSearch = _attributes.getFileToSearch();
+                    if (directoryEntry == fileToSearch)
+                    {
+                        message_t msg = {
+                            .mType = (long)1,
+                            .childPId = (long)getpid(),
+                            .quitting = false,
+                            .starting = false
+                        };
+                        strncpy(msg.filename, fileToSearch.c_str(), MAX_DATA);
+                        strncpy(msg.absolutePath, (directoryToSearch + "/" + fileToSearch).c_str(), MAX_DATA);
+                        _msgQueue.sendMessage(msg);
                     }
+
+                    if (_attributes.isRecursive())
+                        findFile(directoryToSearch + "/" + directoryEntry);
                 }
-                else if(fileSystemHelper::isFile())
+                else if (fileSystemHelper::isFile())
                 {
                     //it's a file
-                    auto fileToSearch = attributes.getFileToSearch();
-                    message_t msg = {
-                        .mType = (long)1,
-                        .childPId = (long)getpid(),
-                        .quitting = false,
-                        .starting = false
-                    };
+                    auto fileToSearch = _attributes.getFileToSearch();
 
-                    strncpy(msg.absolutePath, fileToSearch.c_str(), MAX_DATA);
-                    strncpy(msg.absolutePath, (dirToSerach + "/" + fileToSearch).c_str(), MAX_DATA);
+                    if (_attributes.isCaseInsensitive())
+                        std::transform(directoryEntry.begin(), directoryEntry.end(), directoryEntry.begin(), ::tolower);
 
-                    if (attributes.isCaseInsensitive())
-                        std::transform(file.begin(), file.end(), file.begin(), ::tolower);
-                        
-                    if (file == fileToSearch) 
-                        msgQueue::sendMessage(msg);
+                    if (directoryEntry == fileToSearch)
+                    {
+                        message_t msg = {
+                            .mType = (long)1,
+                            .childPId = (long)getpid(),
+                            .quitting = false,
+                            .starting = false
+                        };
+                        strncpy(msg.filename, fileToSearch.c_str(), MAX_DATA);
+                        strncpy(msg.absolutePath, (directoryToSearch + "/" + fileToSearch).c_str(), MAX_DATA);
+                        _msgQueue.sendMessage(msg);
+                    }
                 }
                 else
                 {
@@ -49,15 +92,6 @@ namespace myFind {
                 exit(1);
             }
         }
-
-        msgQueue::sendMessage(
-            {
-                .mType = 1,
-                .childPId = (long)getpid(),
-                .quitting = true,
-                .starting = false
-            }
-        );
     }
 
     findChildProcess::~findChildProcess()

@@ -15,8 +15,10 @@ namespace myFind {
     class findRootProcess
     {
     private:
+        bool hasChildProcesses = false;
         findAttributes _attributes;
         message_t msgBuffer;
+        msgQueue _msgQueue;
         int msgQueueId;
         std::string currentDirectory;
     public:
