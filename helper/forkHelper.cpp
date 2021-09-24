@@ -1,5 +1,6 @@
 #include "forkHelper.h"
 
+// Tries to fork a new process with the given callbacks on the processes
 void forkHelper::tryFork(std::function<void()>childCallback, std::function<void()>parentCallback) {
     lastPid = fork();
     switch (lastPid)

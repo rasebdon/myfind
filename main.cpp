@@ -5,20 +5,19 @@
 #include <sys/wait.h>
 // Plan:
 // Start server (reciever for findings)
-// Start client for every folder
+// Start client for every file
 // Send path to server if found
-// Start new client in clients if program was run with -R and new folder found
-//      => Tell server that new clients have been started
-// Stop clients if folder is fully searched
-//      => Tell server that this process has stopped
 // Stop server when all processes (count == 0) have been stopped 
 
 int main(int argc, char* argv[]) {
+    // Get the user given search attributes
     myFind::findAttributes attributes = myFind::findAttributes(argc, argv);
     attributes.printAttributes();
-
+    
     myFind::findRootProcess rootProcess = myFind::findRootProcess(attributes);
+    // Start the finders (one for each file)
     rootProcess.startChildrenProcesses();
+    // Start the "Reciever Server" for findings
     rootProcess.receiveMessages();
 
     wait(nullptr);

@@ -9,6 +9,7 @@ namespace myFind {
         this->msgQueueId = _msgQueue.createQueue();
     }
 
+    // Starts the processes that should find the files
     void findRootProcess::startChildrenProcesses() {
         for (auto file : _attributes.getFilesToFind())
         {
@@ -26,15 +27,20 @@ namespace myFind {
     }
 
     void findRootProcess::receiveMessages(){
+        // Recieves findings for as long as the child processes are searching
         while (hasChildProcesses)
         {
+            // Recieve base message
             _msgQueue.receiveMessage(msgBuffer);
             
+            // Cast message via the message type
             switch (msgBuffer.messageType)
             {
+            // Process status has been changed
             case queueMessageType::LiveStatus:
                 processLiveStatusMessage(msgBuffer);
                 break;
+            // File has been found by a child process
             case queueMessageType::FoundFileData:
                 processFoundFileDataMessage(msgBuffer);
                 break;
@@ -44,6 +50,7 @@ namespace myFind {
         }
     }
 
+    // Message handling for starting/stopping processes
     void findRootProcess::processLiveStatusMessage(queueMessage &liveStatusMessage) {
         if(liveStatusMessage.quitting) {
             this->activeClients--;
@@ -57,6 +64,7 @@ namespace myFind {
         }
     }
 
+    // Prints out the found file
     void findRootProcess::processFoundFileDataMessage(queueMessage &foundFileDataMessage) {
         // <pid>: <filename>: <complete-path-to-found-file>\n
         std::cout << foundFileDataMessage.childPId << ": " 

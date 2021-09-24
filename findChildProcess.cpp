@@ -13,11 +13,14 @@ namespace myFind {
     }
 
     void findChildProcess::findFile() {
+        // Send the parent that the process has started searching
         queueMessage aliveMessage{1, queueMessageType::LiveStatus, (long)getpid(), true, false};
         _msgQueue.sendMessage(aliveMessage);
 
+        // Search the file in the current directory
         findFile(_rootDirectoryToSearch);
 
+        // Send the parent that the process has finished searching
         queueMessage deadMessage{1, queueMessageType::LiveStatus, (long)getpid(), false, true};
         _msgQueue.sendMessage(deadMessage);
     }
@@ -25,6 +28,7 @@ namespace myFind {
     void findChildProcess::findFile(std::string directoryToSearch) {
         std::vector<std::string> directoryContent = fileSystemHelper::getDirectoryContent(directoryToSearch);
         
+        // Search for the file
         for (auto directoryEntry : directoryContent) {
             if (fileSystemHelper::fillStatInfo(directoryToSearch + "/" + directoryEntry) == 0)
             {
@@ -51,9 +55,11 @@ namespace myFind {
         auto fileToSearch = _attributes.getFileToSearch();
         std::string directoryEntryCased = directoryEntry;
 
+        // Change strings if the search is case insensitive
         if (_attributes.isCaseInsensitive()) 
             std::transform(directoryEntry.begin(), directoryEntry.end(), directoryEntry.begin(), ::tolower);
 
+        // Send the found entry to the parent process
         if (directoryEntry == fileToSearch)
             sendFoundFileData(directoryEntryCased, directoryOfEntry);
     }
