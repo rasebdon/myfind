@@ -13,6 +13,7 @@ namespace myFind {
     {
     private:
         std::string programName;
+        std::string rootSearchPath;
         std::vector<std::string> files;
         bool caseInsensitive;
         bool recursive;
@@ -28,6 +29,7 @@ namespace myFind {
         bool isRecursive();
         bool isCaseInsensitive();
         std::string getFileToSearch();
+        std::string getRootSearchPath();
         std::vector<std::string> getFilesToFind();
     };
 }

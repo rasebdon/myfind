@@ -30,7 +30,7 @@ std::vector<std::string> fileSystemHelper::getDirectoryContent(std::string direc
         }
         else
         {
-            std::cerr << "opendir" << std::endl;
+            std::cout << "Could not open directory. Invalid search path, or missing permissions." << std::endl;
             exit(EXIT_FAILURE);
         }
         return files;

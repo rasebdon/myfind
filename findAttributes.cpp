@@ -15,7 +15,9 @@ namespace myFind {
     std::string findAttributes::getFileToSearch() {
         return this->files.at(fileToSearchIndex);
     }
-
+    std::string findAttributes::getRootSearchPath() {
+        return this->rootSearchPath;
+    }
     std::vector<std::string> findAttributes::getFilesToFind() {
         return this->files;
     }
@@ -52,18 +54,28 @@ namespace myFind {
         // Print files to find
         if (optind < argc)
         {
-            while (optind < argc)
+            rootSearchPath = argv[optind++];
+            if(optind < argc) 
             {
-                std::string file = argv[optind++];
-                if(this->caseInsensitive)
-                    std::transform(file.begin(), file.end(), file.begin(), ::tolower);
+                while (optind < argc)
+                {
+                    std::string file = argv[optind++];
+                    if(this->caseInsensitive)
+                        std::transform(file.begin(), file.end(), file.begin(), ::tolower);
 
-                this->files.push_back(file);
+                    this->files.push_back(file);
+                }
+            }
+            else
+            {
+                std::cout << this->programName << " error: No files given for searching." << std::endl;
+                printUsage();
+                exit(1);
             }
         }
         else
         {
-            std::cout << this->programName << " error: No files given for searching." << std::endl;
+            std::cout << this->programName << " error: No search path given for searching." << std::endl;
             printUsage();
             exit(1);
         }
@@ -74,13 +86,14 @@ namespace myFind {
     }
 
     void findAttributes::printUsage() {
-        std::cout << "Usage:\n\n " << this->programName << " [-R] [-i] filename [filename2] ... [filenameN]\n" << std::endl;
+        std::cout << "Usage:\n\n " << this->programName << " [-R] [-i] searchpath filename [filename2] ... [filenameN]\n" << std::endl;
     }
 
     void findAttributes::printAttributes() {
         // Print options
         std::cout << "Case-Insensitive: " << std::boolalpha << this->caseInsensitive << " | ";
         std::cout << "Recursive: " << std::boolalpha << this->recursive << " | ";
+        std::cout << "Search path: " << rootSearchPath << " | ";
         std::cout << "Files to find: ";
 
         for (size_t i = 0; i < this->files.size(); i++)

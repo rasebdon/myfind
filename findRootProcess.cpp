@@ -16,7 +16,7 @@ namespace myFind {
             hasChildProcesses = true;
             forkHelper::tryFork(
                 [&](){
-                    findChildProcess _findChildProcess = findChildProcess(currentDirectory, _attributes, _msgQueue);
+                    findChildProcess _findChildProcess = findChildProcess(_attributes.getRootSearchPath(), _attributes, _msgQueue);
                     _findChildProcess.findFile();
                     exit(0);
                 },
